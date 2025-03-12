@@ -20,3 +20,34 @@ exports.createStore = async (store) => {
     console.error("Error Executing query", error);
     }
 };
+
+exports.getStoreById = async (id) => {
+    try {
+    const res = await db.query("SELECT * FROM stores WHERE id = $1", [id]);
+    return res.rows[0];
+    } catch (error) {
+        console.error("Error Executing query", error);
+    }
+}
+
+exports.updateStore = async (id, store) => {
+    try {
+    const res = await db.query(
+        "UPDATE stores SET name = $1, address = $2 WHERE id = $3 RETURNING *",
+        [store.name, store.address, id]
+    );
+    return res.rows[0];
+    } catch (error) {
+        console.error("Error Executing query", error);
+    }
+}
+
+exports.deleteStore = async (id) => {
+    try {
+    const
+    res = await db.query("DELETE FROM stores WHERE id = $1 RETURNING *", [id]);
+    return res.rows[0];
+    } catch (error) {
+        console.error("Error Executing query", error);
+    }
+}
