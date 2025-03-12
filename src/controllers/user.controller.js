@@ -24,6 +24,12 @@ exports.userLogin = async (req, res) => {
         if (!user) {
             return baseResponse(res, false, 404, "User not found", null);
         }
+
+        const passwordMatch = user.password === password;
+        if (!passwordMatch) {
+            return baseResponse(res, false, 401, "Password incorrect", null);
+        }
+        
         baseResponse(res, true, 200, "Login success", user);
     } catch (error) {
         baseResponse(res, false, 500, "An error occurred while logging in", null);
