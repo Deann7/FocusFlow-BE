@@ -8,6 +8,7 @@ const PORT = process.env.PORT || 3000; // Menggunakan PORT dari .env
 app.use(express.json());
 app.use('/store', require('./src/routes/store.route'));
 app.use('/user', require('./src/routes/user.route'));
+app.use('/item', require('./src/routes/item.route'));
 
 
 app.listen(PORT, () => {
