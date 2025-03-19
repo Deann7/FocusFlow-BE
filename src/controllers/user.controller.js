@@ -1,13 +1,22 @@
 const baseResponse = require("../utils/baseResponse.utill.js");  
 const userRepository = require("../repositories/user.repository.js");
+const bcrypt = require('bcrypt');
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 exports.userRegister = async (req, res) => {
     const { name, email, password } = req.query; 
+   
+    if (!emailRegex.test(email)) {
+        return baseResponse(res, false, 400, "Invalid email format", null);
+    }
+
     if (!name || !email || !password) {
         return baseResponse(res, false, 400, "Missing user information", null);
     }
     try {
-        const user = await userRepository.userRegister({ name, email, password, balance: 0 });
+        const hashPassword = await bcrypt.hash(password, 10);
+        const user = await userRepository.userRegister({ name, email, password: hashPassword, balance: 0 });
         baseResponse(res, true, 201, "User created", user);
     } catch (error) {
         baseResponse(res, false, 500, "An error occurred while registering user", null);
@@ -16,6 +25,7 @@ exports.userRegister = async (req, res) => {
 
 exports.userLogin = async (req, res) => {
     const { email, password } = req.query; 
+
     if (!email || !password) {
         return baseResponse(res, false, 400, "Missing email or password", null);
     }
@@ -24,12 +34,10 @@ exports.userLogin = async (req, res) => {
         if (!user) {
             return baseResponse(res, false, 404, "User not found", null);
         }
-
-        const passwordMatch = user.password === password;
-        if (!passwordMatch) {
-            return baseResponse(res, false, 401, "Password incorrect", null);
+        const hashPasswordMatched = await bcrypt.compare(password, user.password);
+        if (!hashPasswordMatched) {
+            return baseResponse(res, false, 401, "Invalid password", null);
         }
-        
         baseResponse(res, true, 200, "Login success", user);
     } catch (error) {
         baseResponse(res, false, 500, "An error occurred while logging in", null);
@@ -54,11 +62,15 @@ exports.updateUser = async (req, res) => {
     if (!id){
         return baseResponse(res, false, 400, "Missing user ID", null);
     }
-    if (!name || !email || !password || balance === undefined) {
+    if (!emailRegex.test(email)) {
+        return baseResponse(res, false, 400, "Invalid email format", null);
+    }
+    if (!name || !email || !password ) {
         return baseResponse(res, false, 400, "Missing user information", null);
     }
     try {
-        const user = await userRepository.updateUser(id, { name, email, password, balance });
+        const hashPassword = await bcrypt.hash(password, 10);
+        const user = await userRepository.updateUser(id, { name, email, password: hashPassword, balance });
         if (!user) {
             return baseResponse(res, false, 404, "User not found", null);
         }
@@ -80,3 +92,38 @@ exports.deleteUser = async (req, res) => {
         baseResponse(res, false, 500, "An error occurred while deleting user", null);
     }
 };
+
+exports.userTopUp = async (req, res) => {
+    const { id, amount } = req.query;
+    if (!id){
+        return baseResponse(res, false, 400, "Missing user ID", null);
+    }
+    if (amount === undefined) {
+        return baseResponse(res, false, 400, "Missing amount information", null);
+    }
+    try {
+        const user = await userRepository.userTopUp(id, amount);
+        if (!user) {
+            return baseResponse(res, false, 404, "User not found", null);
+        }
+        baseResponse(res, true, 200, "User balance updated successfully", user);
+    } catch (error) {
+        baseResponse(res, false, 500, "An error occurred while updating user balance", null);
+    }
+}
+
+exports.getUserById = async (req, res) => {
+    const { id } = req.body;
+    if (!id) {
+        return baseResponse(res, false, 400, "Missing user ID", null);
+    }
+    try {
+        const user = await userRepository.getUserById(id);
+        if (!user) {
+            return baseResponse(res, false, 404, "User not found", null);
+        }
+        baseResponse(res, true, 200, "User retrieved successfully", user);
+    } catch (error) {
+        baseResponse(res, false, 500, "An error occurred while retrieving user", null);
+    }
+}

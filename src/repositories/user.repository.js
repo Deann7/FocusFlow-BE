@@ -1,5 +1,6 @@
 const db = require("../database/pg.database.js");
 
+
 exports.userRegister = async (user) => {
     try {
     const res = await db.query(
@@ -52,3 +53,25 @@ exports.deleteUser = async (id) => {
     console.error("Error Executing query", error);
     }
 };
+
+exports.userTopUp = async (id, amount) => {
+    try {
+    const res = await db.query(
+        "UPDATE users SET balance = balance + $1 WHERE id = $2 RETURNING *",
+        [amount, id]
+    );
+    return res.rows[0];
+    } catch (error) {
+    console.error("Error Executing query", error);
+    }
+};
+
+exports.getUserById = async (id) => {
+    try {
+    const res = await db.query("SELECT * FROM users WHERE id = $1", [id]);
+    return res.rows[0];
+    }
+    catch (error) {
+    console.error("Error Executing query", error);
+    }
+}
