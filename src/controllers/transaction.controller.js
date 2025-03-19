@@ -57,22 +57,33 @@ exports.payTransaction = async (req, res) => {
         if (transactionData.total > transactionData.user_balance) {
             return baseResponse(res, false, 400, "Not enough balance", null);
         }
+
+        // Update item stock
         const updatedItemStock = transactionData.item_stock - transactionData.quantity;
         const updatedItem = await itemRepository.updateItem(transactionData.item_id, { stock: updatedItemStock });
 
         if (!updatedItem) {
             return baseResponse(res, false, 500, "Failed to update item stock", null);
         }
+        const updatedUserBalance = transactionData.user_balance - transactionData.total;
+        const updatedUser = await userRepository.updateUser(transactionData.user_id, { balance: updatedUserBalance });
+
+        if (!updatedUser) {
+            return baseResponse(res, false, 500, "Failed to update user balance", null);
+        }
+
         const updatedTransaction = await transactionRepository.payTransaction(id);
 
         baseResponse(res, true, 200, "Transaction paid", {
             transaction: updatedTransaction,
             updatedItem,
+            updatedUser,
         });
     } catch (error) {
         baseResponse(res, false, 500, "An error occurred while paying transaction", null);
     }
 };
+
 
 
 exports.deleteTransaction = async (req, res) => {
