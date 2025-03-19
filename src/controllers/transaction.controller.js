@@ -35,28 +35,45 @@ exports.createTransaction = async (req, res) => {
 }
 
 exports.payTransaction = async (req, res) => {
-    const {id} = req.params;
+    const { id } = req.params;
     if (!id) {
         return baseResponse(res, false, 400, "Missing transaction ID", null);
-    }try {
-         const transactionData = await transactionRepository.getTransactionWithData(id);
-         if(transactionData.status === "paid") {
-             return baseResponse(res, false, 400, "Transaction already paid", null);
-         }
-            if(transactionData.quantity > transactionData.item_stock) {
-                return baseResponse(res, false, 400, "Not enough stock", null);
-            }
-            if(transactionData.total > transactionData.user_balance) {
-                return baseResponse(res, false, 400, "Not enough balance", null);
-            }
-            const updatedItemStock = transactionData.item_stock - transactionData.quantity;
-            const updatedItem = await itemRepository.updateItem(transactionData.item_id, {stock: updatedItemStock});
-            const updatedTransaction = await transactionRepository.payTransaction(id);
-            baseResponse(res, true, 200, "Transaction paid", updatedTransaction);
+    }
+
+    try {
+        const transactionData = await transactionRepository.getTransactionWithData(id);
+        if (!transactionData) {
+            return baseResponse(res, false, 404, "Transaction not found", null);
+        }
+
+        if (transactionData.status === "paid") {
+            return baseResponse(res, false, 400, "Transaction already paid", null);
+        }
+
+        if (transactionData.quantity > transactionData.item_stock) {
+            return baseResponse(res, false, 400, "Not enough stock", null);
+        }
+
+        if (transactionData.total > transactionData.user_balance) {
+            return baseResponse(res, false, 400, "Not enough balance", null);
+        }
+        const updatedItemStock = transactionData.item_stock - transactionData.quantity;
+        const updatedItem = await itemRepository.updateItem(transactionData.item_id, { stock: updatedItemStock });
+
+        if (!updatedItem) {
+            return baseResponse(res, false, 500, "Failed to update item stock", null);
+        }
+        const updatedTransaction = await transactionRepository.payTransaction(id);
+
+        baseResponse(res, true, 200, "Transaction paid", {
+            transaction: updatedTransaction,
+            updatedItem,
+        });
     } catch (error) {
         baseResponse(res, false, 500, "An error occurred while paying transaction", null);
     }
-}
+};
+
 
 exports.deleteTransaction = async (req, res) => {
     const {id} = req.params;
