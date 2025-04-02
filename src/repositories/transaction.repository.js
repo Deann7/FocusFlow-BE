@@ -48,3 +48,14 @@ exports.getTransactionWithData = async (id) => {
         console.error("Error Executing query", error);
     }
 }
+
+exports.getAllTransactions = async () => {
+    try {
+        const res = await db.query(
+            `SELECT * FROM transactions`
+        );
+        return res.rows;
+    } catch (error) {
+        console.error("Error Executing query", error);
+    }
+}

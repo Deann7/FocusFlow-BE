@@ -102,3 +102,15 @@ exports.deleteTransaction = async (req, res) => {
         baseResponse(res, false, 500, "An error occurred while deleting transaction", null);
     }
 }
+
+exports.getAllTransactions = async (req, res) => {
+    try {
+        const transactions = await transactionRepository.getAllTransactions();
+        if(transactions.length === 0) {
+            return baseResponse(res, false, 404, "Transactions not found", null);
+        }
+        baseResponse(res, true, 200, "Transactions retrieved", transactions);
+    } catch (error) {
+        baseResponse(res, false, 500, "An error occurred while retrieving transactions", null);
+    }
+}

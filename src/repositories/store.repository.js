@@ -51,3 +51,12 @@ exports.deleteStore = async (id) => {
         console.error("Error Executing query", error);
     }
 }
+
+exports.getStoreByName = async (name) => {
+    try {
+    const res = await db.query("SELECT * FROM stores WHERE name = $1", [name]);
+    return res.rows[0];
+    } catch (error) {
+        console.error("Error Executing query", error);
+    }
+}

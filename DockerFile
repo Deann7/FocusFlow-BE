@@ -1,0 +1,15 @@
+FROM node
+
+WORKDIR /src
+
+COPY package*.json ./
+
+
+RUN npm install
+
+
+COPY . .
+
+EXPOSE 4000
+
+CMD ["node", "index.js"]  # Pastikan ini sesuai dengan file utama Anda

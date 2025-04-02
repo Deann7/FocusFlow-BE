@@ -75,3 +75,4 @@ exports.getUserById = async (id) => {
     console.error("Error Executing query", error);
     }
 }
+

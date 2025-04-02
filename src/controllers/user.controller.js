@@ -16,6 +16,10 @@ exports.userRegister = async (req, res) => {
     }
     try {
         const hashPassword = await bcrypt.hash(password, 10);
+        const userExist = await userRepository.getUserByEmail(email);
+        if (userExist) {
+            return baseResponse(res, false, 400, "Email already registered", null);
+        }
         const user = await userRepository.userRegister({ name, email, password: hashPassword, balance: 0 });
         baseResponse(res, true, 201, "User created", user);
     } catch (error) {
@@ -100,6 +104,9 @@ exports.userTopUp = async (req, res) => {
     }
     if (amount === undefined) {
         return baseResponse(res, false, 400, "Missing amount information", null);
+    }
+    if (amount <= 0 ){
+        return baseResponse(res, false, 400, "You Cant top up negative or zero amount", null);
     }
     try {
         const user = await userRepository.userTopUp(id, amount);

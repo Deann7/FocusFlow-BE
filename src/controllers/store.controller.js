@@ -21,6 +21,14 @@ exports.createStore = async (req, res) => {
     }
     try {
         const store = await storeRepository.createStore(req.body);
+        const ifStoreNameExist = await storeRepository.getStoreByName(name);
+        if (ifStoreNameExist) {
+            return res.status(400).json({
+                success: false,
+                message: "Store name already exist, please use another name",
+                payload: null
+            });
+        }
         baseResponse(res, true, 201, "Store created successfully", store);
     } catch (error) {
         console.error("❌ Error executing query:", error.message);
