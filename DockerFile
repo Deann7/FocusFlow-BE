@@ -1,15 +1,11 @@
-FROM node
+FROM node:18-alpine
 
-WORKDIR /src
+WORKDIR /app
 
 COPY package*.json ./
 
-
 RUN npm install
-
-
 COPY . .
+ENV PORT=4000
 
-EXPOSE 4000
-
-CMD ["node", "index.js"]  # Pastikan ini sesuai dengan file utama Anda
+CMD ["npm", "start"]  
