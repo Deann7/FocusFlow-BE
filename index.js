@@ -8,22 +8,21 @@ const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
     origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    try {
-    const parsedOrigin = new URL(origin);
-    if (parsedOrigin.hostname === 'os.netlabdte.com') {
-    callback(null, true);
-    } else {
-    callback(new Error('Blocked by CORS: Domain tidak diizinkan'));
-    }
-    } catch (err) {
-    callback(new Error('Invalid origin'));
-    }
+        if (!origin) return callback(null, true);
+        try {
+            const parsedOrigin = new URL(origin);
+            if (parsedOrigin.hostname === 'os.netlabdte.com' || 
+                (parsedOrigin.hostname === 'localhost' && parsedOrigin.port === '4000')) {
+                callback(null, true);
+            } else {
+                callback(new Error('Blocked by CORS: Domain tidak diizinkan'));
+            }
+        } catch (err) {
+            callback(new Error('Invalid origin'));
+        }
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE']
-   };
-   app.use(cors(corsOptions));
-
+};
 
 app.use(express.json());
 app.use('/store', require('./src/routes/store.route'));
