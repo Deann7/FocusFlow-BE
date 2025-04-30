@@ -8,7 +8,6 @@ const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
     origin: function (origin, callback) {
-        // Izinkan request tanpa origin (seperti dari Postman atau curl)
         if (!origin) return callback(null, true);
         
         try {
@@ -17,10 +16,11 @@ const corsOptions = {
             // Daftar hostname yang diizinkan
             const allowedDomains = [
                 'os.netlabdte.com',
-                'localhost' // Ini akan mencakup localhost dengan port apapun
+                'localhost', 
+                'cs-9-deandro-najwan-ahmad-syahbanna.vercel.app'
             ];
             
-            // Izinkan localhost dengan port 5173 (Vite/React) dan 4000
+
             if (allowedDomains.includes(parsedOrigin.hostname) || 
                 (parsedOrigin.hostname === 'localhost' && 
                  ['4000', '5173'].includes(parsedOrigin.port))) {
@@ -35,7 +35,7 @@ const corsOptions = {
     methods: ['GET', 'POST', 'PUT', 'DELETE']
 };
 
-// Apply CORS middleware
+
 app.use(cors(corsOptions));
 
 app.use(express.json());
