@@ -8,11 +8,22 @@ const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
     origin: function (origin, callback) {
+        // Izinkan request tanpa origin (seperti dari Postman atau curl)
         if (!origin) return callback(null, true);
+        
         try {
             const parsedOrigin = new URL(origin);
-            if (parsedOrigin.hostname === 'os.netlabdte.com' || 
-                (parsedOrigin.hostname === 'localhost' && parsedOrigin.port === '4000')) {
+            
+            // Daftar hostname yang diizinkan
+            const allowedDomains = [
+                'os.netlabdte.com',
+                'localhost' // Ini akan mencakup localhost dengan port apapun
+            ];
+            
+            // Izinkan localhost dengan port 5173 (Vite/React) dan 4000
+            if (allowedDomains.includes(parsedOrigin.hostname) || 
+                (parsedOrigin.hostname === 'localhost' && 
+                 ['4000', '5173'].includes(parsedOrigin.port))) {
                 callback(null, true);
             } else {
                 callback(new Error('Blocked by CORS: Domain tidak diizinkan'));
@@ -23,6 +34,9 @@ const corsOptions = {
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE']
 };
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use('/store', require('./src/routes/store.route'));
