@@ -6,6 +6,6 @@ COPY package*.json ./
 
 RUN npm install
 COPY . .
-ENV PORT=4000
+ENV PORT=4100
 
 CMD ["npm", "start"]  
