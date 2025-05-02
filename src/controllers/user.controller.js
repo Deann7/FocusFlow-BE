@@ -23,6 +23,7 @@ exports.userRegister = async (req, res) => {
         const user = await userRepository.userRegister({ name, email, password: hashPassword });
         baseResponse(res, true, 201, "User created", user);
     } catch (error) {
+        console.error("Registration error:", error);
         baseResponse(res, false, 500, "An error occurred while registering user", null);
     }
 };
@@ -34,7 +35,8 @@ exports.userLogin = async (req, res) => {
         return baseResponse(res, false, 400, "Missing email or password", null);
     }
     try {
-        const user = await userRepository.userLogin(email, password);
+        // Call userLogin with only the email parameter
+        const user = await userRepository.userLogin(email);
         if (!user) {
             return baseResponse(res, false, 404, "User not found", null);
         }
@@ -44,10 +46,10 @@ exports.userLogin = async (req, res) => {
         }
         baseResponse(res, true, 200, "Login success", user);
     } catch (error) {
+        console.error("Login error:", error);
         baseResponse(res, false, 500, "An error occurred while logging in", null);
     }
 };
-
 
 exports.deleteUser = async (req, res) => {
     const { id } = req.params;
@@ -76,4 +78,4 @@ exports.getUserById = async (req, res) => {
     } catch (error) {
         baseResponse(res, false, 500, "An error occurred while retrieving user", null);
     }
-}
+};
