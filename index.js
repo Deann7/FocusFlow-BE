@@ -39,11 +39,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(express.json());
-app.use('/store', require('./src/routes/store.route'));
 app.use('/user', require('./src/routes/user.route'));
-app.use('/item', require('./src/routes/item.route'));
-app.use('/transaction', require('./src/routes/transaction.route'));
-
+app.use('/card', require('./src/routes/card.route'));
 
 app.post('/validate-password', (req, res) => {
     const {password} = req.body;

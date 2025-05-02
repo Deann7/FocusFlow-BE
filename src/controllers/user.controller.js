@@ -48,41 +48,6 @@ exports.userLogin = async (req, res) => {
     }
 };
 
-exports.getUserByEmail = async (req, res) => {
-    const { email } = req.params;
-    try {
-        const user = await userRepository.getUserByEmail(email);
-        if (!user) {
-            return baseResponse(res, false, 404, "User not found", null);
-        }
-        baseResponse(res, true, 200, "User retrieved successfully", user);
-    } catch (error) {
-        baseResponse(res, false, 500, "An error occurred while retrieving user", null);
-    }
-};
-
-exports.updateUser = async (req, res) => {
-    const { id, name, email, password, balance } = req.body;
-    if (!id){
-        return baseResponse(res, false, 400, "Missing user ID", null);
-    }
-    if (!emailRegex.test(email)) {
-        return baseResponse(res, false, 400, "Invalid email format", null);
-    }
-    if (!name || !email || !password ) {
-        return baseResponse(res, false, 400, "Missing user information", null);
-    }
-    try {
-        const hashPassword = await bcrypt.hash(password, 10);
-        const user = await userRepository.updateUser(id, { name, email, password: hashPassword, balance });
-        if (!user) {
-            return baseResponse(res, false, 404, "User not found", null);
-        }
-        baseResponse(res, true, 200, "User updated successfully", user);
-    } catch (error) {
-        baseResponse(res, false, 500, "An error occurred while updating user", null);
-    }
-};
 
 exports.deleteUser = async (req, res) => {
     const { id } = req.params;
@@ -96,28 +61,6 @@ exports.deleteUser = async (req, res) => {
         baseResponse(res, false, 500, "An error occurred while deleting user", null);
     }
 };
-
-exports.userTopUp = async (req, res) => {
-    const { id, amount } = req.query;
-    if (!id){
-        return baseResponse(res, false, 400, "Missing user ID", null);
-    }
-    if (amount === undefined) {
-        return baseResponse(res, false, 400, "Missing amount information", null);
-    }
-    if (amount <= 0 ){
-        return baseResponse(res, false, 400, "You Cant top up negative or zero amount", null);
-    }
-    try {
-        const user = await userRepository.userTopUp(id, amount);
-        if (!user) {
-            return baseResponse(res, false, 404, "User not found", null);
-        }
-        baseResponse(res, true, 200, "User balance updated successfully", user);
-    } catch (error) {
-        baseResponse(res, false, 500, "An error occurred while updating user balance", null);
-    }
-}
 
 exports.getUserById = async (req, res) => {
     const { id } = req.body;
