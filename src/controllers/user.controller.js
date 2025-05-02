@@ -20,7 +20,7 @@ exports.userRegister = async (req, res) => {
         if (userExist) {
             return baseResponse(res, false, 400, "Email already registered", null);
         }
-        const user = await userRepository.userRegister({ name, email, password: hashPassword, balance: 0 });
+        const user = await userRepository.userRegister({ name, email, password: hashPassword });
         baseResponse(res, true, 201, "User created", user);
     } catch (error) {
         baseResponse(res, false, 500, "An error occurred while registering user", null);
