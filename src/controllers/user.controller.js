@@ -79,3 +79,12 @@ exports.getUserById = async (req, res) => {
         baseResponse(res, false, 500, "An error occurred while retrieving user", null);
     }
 };
+
+exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await userRepository.getAllUsers();
+        baseResponse(res, true, 200, "Users retrieved successfully", users);
+    } catch (error) {
+        baseResponse(res, false, 500, "An error occurred while retrieving users", null);
+    }
+}

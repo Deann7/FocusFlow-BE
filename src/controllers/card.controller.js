@@ -4,14 +4,26 @@ const cardRepository = require("../repositories/card.repositories.js");
 exports.createCard = async (req, res) => {
     const { title, description, deadline, user_id } = req.body;
     
-    if (!title || !user_id) {
-        return baseResponse(res, false, 400, "Title and user ID are required", null);
+    if (!title){
+        return baseResponse(res, false, 400, "Title is required", null);
+    }
+    if (!user_id) {
+        return baseResponse(res, false, 400, "User ID is required", null);
     }
 
     try {
-        const card = await cardRepository.createCard({ title, description, deadline, user_id });
+        // Make description optional
+        const cardData = { 
+            title, 
+            description: description || "", 
+            deadline: deadline || new Date(), 
+            user_id 
+        };
+        
+        const card = await cardRepository.createCard(cardData);
         baseResponse(res, true, 201, "Card created successfully", card);
     } catch (error) {
+        console.error("Card creation error:", error);
         baseResponse(res, false, 500, "An error occurred while creating the card", null);
     }
 };
@@ -27,6 +39,7 @@ exports.getCardsByUserId = async (req, res) => {
         const cards = await cardRepository.getCardsByUserId(user_id);
         baseResponse(res, true, 200, "Cards retrieved successfully", cards);
     } catch (error) {
+        console.error("Get cards error:", error);
         baseResponse(res, false, 500, "An error occurred while retrieving cards", null);
     }
 };
@@ -47,6 +60,7 @@ exports.getCardById = async (req, res) => {
         
         baseResponse(res, true, 200, "Card retrieved successfully", card);
     } catch (error) {
+        console.error("Get card error:", error);
         baseResponse(res, false, 500, "An error occurred while retrieving the card", null);
     }
 };
@@ -62,6 +76,7 @@ exports.updateCard = async (req, res) => {
     if (!title) {
         return baseResponse(res, false, 400, "Title is required", null);
     }
+    
     if (status && !['selesai', 'belum selesai'].includes(status)) {
         return baseResponse(res, false, 400, "Invalid status value. Must be 'selesai' or 'belum selesai'", null);
     }
@@ -82,11 +97,11 @@ exports.updateCard = async (req, res) => {
         
         baseResponse(res, true, 200, "Card updated successfully", updatedCard);
     } catch (error) {
+        console.error("Update card error:", error);
         baseResponse(res, false, 500, "An error occurred while updating the card", null);
     }
 };
 
-// Delete a card
 exports.deleteCard = async (req, res) => {
     const { id } = req.params;
     
@@ -103,6 +118,7 @@ exports.deleteCard = async (req, res) => {
         
         baseResponse(res, true, 200, "Card deleted successfully", card);
     } catch (error) {
+        console.error("Delete card error:", error);
         baseResponse(res, false, 500, "An error occurred while deleting the card", null);
     }
 };

@@ -51,3 +51,14 @@ exports.getUserByEmail = async (email) => {
     }
 };
 
+exports.getAllUsers = async () => {
+    try {
+        const res = await db.query("SELECT * FROM users");
+        return res.rows;
+    } catch (error) {
+        console.error("Error Executing query", error);
+        throw error;
+    }
+};
+
+

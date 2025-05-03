@@ -1,6 +1,5 @@
 const db = require("../database/pg.database.js");
 
-
 exports.createCard = async (cardData) => {
     const { title, description, deadline, user_id } = cardData;
     
@@ -35,9 +34,13 @@ exports.getCardById = async (cardId) => {
     return result.rows[0];
 };
 
-
 exports.updateCard = async (cardId, cardData) => {
     const { title, description, deadline, status } = cardData;
+    
+    // Validate status is either 'selesai' or 'belum selesai'
+    const validStatus = status && ['selesai', 'belum selesai'].includes(status) 
+        ? status 
+        : 'belum selesai';
     
     const query = `
         UPDATE cards
@@ -50,11 +53,10 @@ exports.updateCard = async (cardId, cardData) => {
         RETURNING *
     `;
     
-    const result = await db.query(query, [title, description, deadline, status, cardId]);
+    const result = await db.query(query, [title, description, deadline, validStatus, cardId]);
     return result.rows[0];
 };
 
-// Delete a card
 exports.deleteCard = async (cardId) => {
     const query = `
         DELETE FROM cards
