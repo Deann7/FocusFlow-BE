@@ -35,7 +35,6 @@ exports.userLogin = async (req, res) => {
         return baseResponse(res, false, 400, "Missing email or password", null);
     }
     try {
-        // Call userLogin with only the email parameter
         const user = await userRepository.userLogin(email);
         if (!user) {
             return baseResponse(res, false, 404, "User not found", null);

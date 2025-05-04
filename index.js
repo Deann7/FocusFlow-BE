@@ -15,9 +15,9 @@ const corsOptions = {
             
             // Daftar hostname yang diizinkan
             const allowedDomains = [
-                'os.netlabdte.com',
                 'localhost', 
-                'cs-9-deandro-najwan-ahmad-syahbanna.vercel.app'
+                'cs-9-deandro-najwan-ahmad-syahbanna.vercel.app',
+                'tutam-deandro-najwan-ahmad-syahbanna-sbd-9.vercel.app'
             ];
             
 
