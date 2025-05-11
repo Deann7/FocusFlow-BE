@@ -12,7 +12,6 @@ exports.createCard = async (req, res) => {
     }
 
     try {
-        // Make description optional
         const cardData = { 
             title, 
             description: description || "", 

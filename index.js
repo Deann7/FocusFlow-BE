@@ -23,7 +23,7 @@ const corsOptions = {
 
             if (allowedDomains.includes(parsedOrigin.hostname) || 
                 (parsedOrigin.hostname === 'localhost' && 
-                 ['4000', '5173'].includes(parsedOrigin.port))) {
+                 ['4105', '5173'].includes(parsedOrigin.port))) {
                 callback(null, true);
             } else {
                 callback(new Error('Blocked by CORS: Domain tidak diizinkan'));
