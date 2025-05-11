@@ -17,7 +17,8 @@ const corsOptions = {
             const allowedDomains = [
                 'localhost', 
                 'cs-9-deandro-najwan-ahmad-syahbanna.vercel.app',
-                'tutam-deandro-najwan-ahmad-syahbanna-sbd-9.vercel.app'
+                'tutam-deandro-najwan-ahmad-syahbanna-sbd-9.vercel.app',
+                '0f5a-2001-448a-2075-1fcd-e8fe-8b6d-fee0-69a7.ngrok-free.app'
             ];
             
 
