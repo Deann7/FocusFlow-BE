@@ -1,15 +1,20 @@
 const db = require("../database/pg.database.js");
 
 exports.createCard = async (cardData) => {
-    const { title, description, deadline, user_id } = cardData;
+    const { title, description, deadline, user_id, status } = cardData;
+    
+    // Default to 'belum selesai' for new cards
+    const validStatus = status && ['sudah selesai', 'belum selesai'].includes(status) 
+        ? status 
+        : 'belum selesai';
     
     const query = `
-        INSERT INTO cards (title, description, deadline, user_id)
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO cards (title, description, deadline, user_id, status)
+        VALUES ($1, $2, $3, $4, $5::card_status)
         RETURNING *
     `;
     
-    const result = await db.query(query, [title, description, deadline, user_id]);
+    const result = await db.query(query, [title, description, deadline, user_id, validStatus]);
     return result.rows[0];
 };
 
@@ -37,8 +42,8 @@ exports.getCardById = async (cardId) => {
 exports.updateCard = async (cardId, cardData) => {
     const { title, description, deadline, status } = cardData;
     
-    // Validate status is either 'selesai' or 'belum selesai'
-    const validStatus = status && ['selesai', 'belum selesai'].includes(status) 
+    // Validate status is either 'sudah selesai' or 'belum selesai'
+    const validStatus = status && ['sudah selesai', 'belum selesai'].includes(status) 
         ? status 
         : 'belum selesai';
     
@@ -47,7 +52,7 @@ exports.updateCard = async (cardId, cardData) => {
         SET title = $1, 
             description = $2, 
             deadline = $3, 
-            status = $4,
+            status = $4::card_status,
             updated_at = CURRENT_TIMESTAMP
         WHERE id = $5
         RETURNING *

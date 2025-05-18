@@ -2,7 +2,7 @@ const baseResponse = require("../utils/baseResponse.utill.js");
 const cardRepository = require("../repositories/card.repositories.js");
 
 exports.createCard = async (req, res) => {
-    const { title, description, deadline, user_id } = req.body;
+    const { title, description, deadline, user_id, status } = req.body;
     
     if (!title){
         return baseResponse(res, false, 400, "Title is required", null);
@@ -10,13 +10,18 @@ exports.createCard = async (req, res) => {
     if (!user_id) {
         return baseResponse(res, false, 400, "User ID is required", null);
     }
+    
+    if (status && !['sudah selesai', 'belum selesai'].includes(status)) {
+        return baseResponse(res, false, 400, "Invalid status value. Must be 'sudah selesai' or 'belum selesai'", null);
+    }
 
     try {
         const cardData = { 
             title, 
             description: description || "", 
             deadline: deadline || new Date(), 
-            user_id 
+            user_id,
+            status: status || 'belum selesai'
         };
         
         const card = await cardRepository.createCard(cardData);
@@ -75,9 +80,8 @@ exports.updateCard = async (req, res) => {
     if (!title) {
         return baseResponse(res, false, 400, "Title is required", null);
     }
-    
-    if (status && !['selesai', 'belum selesai'].includes(status)) {
-        return baseResponse(res, false, 400, "Invalid status value. Must be 'selesai' or 'belum selesai'", null);
+      if (status && !['sudah selesai', 'belum selesai'].includes(status)) {
+        return baseResponse(res, false, 400, "Invalid status value. Must be 'sudah selesai' or 'belum selesai'", null);
     }
 
     try {
