@@ -41,6 +41,8 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/user', require('./src/routes/user.route'));
 app.use('/card', require('./src/routes/card.route'));
+app.use('/pomodoro', require('./src/routes/pomodoro.route')); // Add this line
+app.use("/flashcard", require("./src/routes/flashcard.route.js"));
 
 app.post('/validate-password', (req, res) => {
     const {password} = req.body;
