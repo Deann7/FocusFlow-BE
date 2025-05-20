@@ -44,6 +44,12 @@ app.use('/card', require('./src/routes/card.route'));
 app.use('/pomodoro', require('./src/routes/pomodoro.route')); // Add this line
 app.use("/flashcard", require("./src/routes/flashcard.route.js"));
 
+// Import routes
+const dailyStreakRoutes = require("./src/routes/daily.streak.route.js");
+
+// Use routes
+app.use("/api/streak", dailyStreakRoutes);
+
 app.post('/validate-password', (req, res) => {
     const {password} = req.body;
     const passwordRegex = /^(?=.*\d)(?=.*[!@#$%^&*()_+{}[\]:";'<>,.?/~\\-]).{8,}$/;

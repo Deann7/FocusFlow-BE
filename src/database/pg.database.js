@@ -9,7 +9,7 @@ const pool = new Pool({
 });
 
 // Add event handler for connection errors
-pool.on('error', (err) => {
+pool.on('error', (err,client) => {
     console.error('Unexpected error on idle client', err);
     // Don't crash the server, but log the error
 });
